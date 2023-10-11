@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTSP Stream Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsmpeg-player@3.0.3/build/jsmpeg-player.min.js"></script>
+</head>
+<body>
+    <label for="rtspLink">Enter RTSP Link:</label>
+    <input type="text" id="rtspLink">
+
+    <canvas id="videoCanvas" width="640" height="480"></canvas>
+    <script>
+        window.onload = function() {
+            const canvas = document.getElementById('videoCanvas');
+            const player = new JSMpeg.Player('ws://localhost:9999', { canvas: canvas });
+        }
+    </script>
+    <button onclick="startRecording()">Start Recording</button>
+    <button onclick="stopRecording()">Stop Recording</button>
+    
+    <script>
+        function startRecording() {
+            const rtspLink = document.getElementById('rtspLink').value;
+            if (!rtspLink) {
+                return alert('Please provide an RTSP link');
+            }
+
+            fetch('/start-recording', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ rtspLink })
+            })
+            .then(response => response.text())
+            .then(console.log);
+        }
+    
+        function stopRecording() {
+            fetch('/stop-recording').then(response => response.text()).then(console.log);
+        }
+    </script>
+</body>
+</html>
+<!-- rtsp://admin:Hik12345@61.247.185.26:5555/Streaming/channels/2 -->
